@@ -1,0 +1,21 @@
+#app2{
+
+}
+#app2 .tab-bar{
+    display: flex;
+}
+#app2 .tab-bar > li{
+    width: 50vw;
+    border: 2px solid blue;
+}
+#app2 .tab-bar > li.selected{
+    background: green;
+    color: white;
+}
+#app2 .tab-content{}
+#app2 .tab-content > li{
+    display: none;
+}
+#app2 .tab-content > li.active{
+    display: block;
+}
