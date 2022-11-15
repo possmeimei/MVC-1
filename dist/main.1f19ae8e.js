@@ -11325,43 +11325,69 @@ return jQuery;
 },{"process":"C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/process/browser.js"}],"app1.js":[function(require,module,exports) {
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
 require("./app1.css");
 
 var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var $button1 = (0, _jquery.default)('#add1');
-var $button2 = (0, _jquery.default)('#minus1');
-var $button3 = (0, _jquery.default)('#mul2');
-var $button4 = (0, _jquery.default)('#divide2');
-var $number = (0, _jquery.default)('#number');
-var n = localStorage.getItem('n');
-$number.text(n || 100);
-$button1.on('click', function () {
-  var n = parseInt($number.text());
-  n += 1;
-  localStorage.setItem('n', n);
-  $number.text(n);
-});
-$button2.on('click', function () {
-  var n = parseInt($number.text());
-  n -= 1;
-  localStorage.setItem('n', n);
-  $number.text(n);
-});
-$button3.on('click', function () {
-  var n = parseInt($number.text());
-  n *= 2;
-  localStorage.setItem('n', n);
-  $number.text(n);
-});
-$button4.on('click', function () {
-  var n = parseInt($number.text());
-  n /= 2;
-  localStorage.setItem('n', n);
-  $number.text(n);
-});
+// 数据相关放到M
+var m = {
+  // 初始化数据
+  data: {
+    n: parseInt(localStorage.getItem('n'))
+  }
+}; // 视图相关的放到V
+
+var v = {
+  el: null,
+  container: null,
+  html: "\n        <div>\n            <div class=\"output\">\n                <span id=\"number\">{{n}}</span>\n            </div>\n            <div class=\"actions\">\n                <button id=\"add1\">+1</button>\n                <button id=\"minus1\">-1</button>\n                <button id=\"mul2\">*2</button>\n                <button id=\"divide2\">\xF72</button>\n            </div>\n        </div>\n",
+  init: function init(container) {
+    v.container = (0, _jquery.default)(container);
+    v.render();
+  },
+  render: function render() {
+    if (v.container.children.length === 0) {
+      (0, _jquery.default)(v.html.replace('{{n}}', m.data.n)).prependTo(v.container);
+    } else {
+      v.container.empty();
+      (0, _jquery.default)(v.html.replace('{{n}}', m.data.n)).prependTo(v.container);
+    }
+  }
+}; //其他都到C
+
+var c = {
+  init: function init(container) {
+    v.init(container);
+    c.bindEvents();
+  },
+  bindEvents: function bindEvents() {
+    v.container.on('click', '#add1', function () {
+      m.data.n += 1;
+      v.render();
+    });
+    v.container.on('click', '#minus1', function () {
+      m.data.n -= 1;
+      v.render();
+    });
+    v.container.on('click', '#mul2', function () {
+      m.data.n *= 2;
+      v.render();
+    });
+    v.container.on('click', '#divide2', function () {
+      m.data.n /= 2;
+      v.render();
+    });
+  }
+};
+var _default = c;
+exports.default = _default;
 },{"./app1.css":"app1.css","jquery":"../node_modules/jquery/dist/jquery.js"}],"app2.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
@@ -11376,15 +11402,19 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var html = "\n        <section id=\"app2\">\n            <ol class=\"tab-bar\">\n                <li><span>1</span></li>\n                <li><span>2</span></li>\n            </ol>\n            <ol class=\"tab-content\">\n                <li>\u5185\u5BB91</li>\n                <li>\u5185\u5BB92</li>\n            </ol>\n        </section>\n";
+var $element = (0, _jquery.default)(html).appendTo((0, _jquery.default)('body>.page'));
 var $tabBar = (0, _jquery.default)('#app2 .tab-bar');
 var $tabContent = (0, _jquery.default)('#app2 .tab-content');
+var index = localStorage.getItem('app2.index') || 0;
 $tabBar.on('click', 'li', function (e) {
   var $li = (0, _jquery.default)(e.currentTarget);
   $li.addClass('selected').siblings().removeClass('selected');
   var index = $li.index();
+  localStorage.setItem('app2.index', index);
   $tabContent.children().eq(index).addClass('active').siblings().removeClass('active');
 });
-$tabBar.children().eq(0).trigger('click');
+$tabBar.children().eq(index).trigger('click');
 },{"./app2.css":"app2.css","jquery":"../node_modules/jquery/dist/jquery.js"}],"app3.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
@@ -11399,9 +11429,19 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var html = "\n        <section id=\"app3\">\n            <div class=\"square\"></div>\n        </section>\n";
+var $element = (0, _jquery.default)(html).appendTo((0, _jquery.default)('body>.page'));
 var $square = (0, _jquery.default)('#app3 .square');
+var active = localStorage.getItem('app3.active') === 'yes';
+$square.toggleClass('active', active);
 $square.on('click', function () {
-  $square.toggleClass('active');
+  if ($square.hasClass('active')) {
+    $square.removeClass('active');
+    localStorage.setItem('app3.active', 'no');
+  } else {
+    $square.addClass('active');
+    localStorage.setItem('app3.active', 'yes');
+  }
 });
 },{"./app3.css":"app3.css","jquery":"../node_modules/jquery/dist/jquery.js"}],"app4.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
@@ -11417,6 +11457,8 @@ var _jquery = _interopRequireDefault(require("jquery"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var html = "\n        <section id=\"app4\">\n            <div class=\"circle\"></div>\n        </section>\n";
+var $element = (0, _jquery.default)(html).appendTo((0, _jquery.default)('body>.page'));
 var $circle = (0, _jquery.default)('#app4 .circle');
 $circle.on('mouseenter', function () {
   $circle.addClass('active');
@@ -11430,13 +11472,17 @@ require("./reset.css");
 
 require("./global.css");
 
-require("./app1.js");
+var _app = _interopRequireDefault(require("./app1.js"));
 
 require("./app2.js");
 
 require("./app3.js");
 
 require("./app4.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_app.default.init('#app1');
 },{"./reset.css":"reset.css","./global.css":"global.css","./app1.js":"app1.js","./app2.js":"app2.js","./app3.js":"app3.js","./app4.js":"app4.js"}],"C:/Users/Administrator/AppData/Local/Yarn/Data/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
